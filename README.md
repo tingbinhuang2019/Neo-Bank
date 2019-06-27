@@ -34,4 +34,6 @@
 
   ### Delete a user 
 
+      for example: 
+
       http://127.0.0.1:8080/delete?remove_user=Cao Yu 
