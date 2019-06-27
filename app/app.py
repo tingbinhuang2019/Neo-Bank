@@ -16,11 +16,13 @@ client = MongoClient('localhost', 27017)
 db = client.check
 col = db.uuu
 
+# method to check if database has user name
+
 
 def hasUser(name):
     return (col.find_one({"name": name})) != None
 
-
+# get and post method
 @app.route('/getData', methods=["GET", "POST"])
 def getData():
     name = request.args.get("new_user")
@@ -33,7 +35,7 @@ def getData():
     res = Response(p, mimetype='application/json')
     return res
 
-
+# patch method
 @app.route('/createTransaction', methods=["GET", "PATCH"])
 def updateData():
     fromWho = request.args.get("sender")
@@ -51,7 +53,7 @@ def updateData():
     res = Response(p, mimetype='application/json')
     return res
 
-
+# delete method
 @app.route('/delete', methods=["GET", "POST", "DELETE"])
 def removeUser():
     remove_user = request.args.get("remove_user")
