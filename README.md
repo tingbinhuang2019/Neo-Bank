@@ -18,6 +18,9 @@
   ### View a user's transaction 
     
       if database does not have user info, it will create one in API and insert user info to database.
+
+      for example: 
+      
       http://127.0.0.1:8080/getData?new_user=tingbin huang
     
 
