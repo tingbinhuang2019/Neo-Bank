@@ -12,8 +12,11 @@
     -synapsepy
     -pymongo 
   ```
+## 3. Use client_id, client_secret, and fingerprint 
 
-## 3. Usage
+  Please nevigate to config.py and change client_id, client_secret, and fingerprint in order to make API calls.
+
+## 4. Usage
 
   In command line, type: python3 app.py
 
