@@ -16,10 +16,9 @@
 ## 3. Usage
 
   ### View a user's transaction 
-    ```sh
+    
       if database does not have user info, it will create one in API and insert user info to database.
       http://127.0.0.1:8080/getData?new_user=tingbin huang
-    ```
+    
 
   ### Create transaction between users
-  
