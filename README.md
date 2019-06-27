@@ -34,6 +34,8 @@
 
   ### Delete a user 
 
+      Write user's name in the link.
+
       for example: 
 
       http://127.0.0.1:8080/delete?remove_user=Cao Yu 
