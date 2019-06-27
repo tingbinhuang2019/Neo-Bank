@@ -2,33 +2,66 @@ from flask import request, Response
 from flask import Flask
 from synapsepy import Client
 import json
+from pymongo import MongoClient
+from datetime import datetime
+import time
+import pprint
+from cleanData import create_user, clean_user_data, remove_user_data
+from createTrans import create_user_trans
+from config import client, fingerprint, ip_address, usr_id
 
 app = Flask(__name__)
 
-client = Client(
-    client_id='client_id_270ltbWxdXaGJT5sFEePNUR4n0gz9CoYZiQkSuML',
-    client_secret='client_secret_gWL1sPb3zn5Y4kydBHwu9F8Ta62NtE0lRqi7MQKS',
-    fingerprint='ee422391e52e3b8a81d44fd0a508a84f',
-    ip_address='1.2.3.132',
-    devmode=True
-)
-
-usr_id = '5d0be3f12beda64993244caf'
-usr = client.get_user(usr_id, full_dehydrate=True)
-
-# ---------------------
-name = 'Tim'
-email = 'louie121201huang@gmail.com'
-# ----------------------
+client = MongoClient('localhost', 27017)
+db = client.check
+col = db.uuu
 
 
-@app.route('/getData', methods=["GET"])
-def getDatea():
-    obj = usr.body
-    p = json.dumps(obj, sort_keys=False, indent=1)
+def hasUser(name):
+    return (col.find_one({"name": name})) != None
+
+
+@app.route('/getData', methods=["GET", "POST"])
+def getData():
+    name = request.args.get("new_user")
+    if not hasUser(name):
+        body = create_user(name, fingerprint)
+        col.insert_one(body)
+    obj = col.find_one({"name": name})
+    user_data = clean_user_data(obj)
+    p = json.dumps(user_data, sort_keys=False, indent=1)
     res = Response(p, mimetype='application/json')
     return res
 
 
+@app.route('/createTransaction', methods=["GET", "PATCH"])
+def updateData():
+    fromWho = request.args.get("sender")
+    toWho = request.args.get("receiver")
+    amount = request.args.get('amount')
+
+    if not hasUser(fromWho) or not hasUser(toWho):
+        return Response("no such user, please re-enter user name.", mimetype='application/json')
+    d = create_user_trans(col, amount, fromWho, toWho)
+
+    d = {"sender": fromWho,
+         "receiver": toWho,
+         "amount": amount}
+    p = json.dumps(d, sort_keys=False, indent=1)
+    res = Response(p, mimetype='application/json')
+    return res
+
+
+@app.route('/delete', methods=["GET", "POST", "DELETE"])
+def removeUser():
+    remove_user = request.args.get("remove_user")
+
+    if not hasUser(remove_user):
+        return Response("No such user in database.", mimetype='application/json')
+    remove_user_data(remove_user, col)
+    message = "User " + remove_user + " has been removed."
+    return Response(message, mimetype='application/json')
+
+
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port='8080')
+    app.run(host='0.0.0.0', port='8080', debug=True)
