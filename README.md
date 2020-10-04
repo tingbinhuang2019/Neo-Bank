@@ -20,7 +20,7 @@
 
   In command line, type: python3 app.py
 
-  ### View a user's transaction 
+  ### View a user's transactions 
     
       if database does not have user info, it will create one in API and insert user info to database. Otherwise, it will return all transaction from user.
 
